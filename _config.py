@@ -41,6 +41,34 @@ class config:
     def fullpath(self) -> None:
         fullpath = f"{self.path}/{self.filename}"
         return fullpath
+    
+    def delete(self, section: str = "DEFAULT", option: str = None, value: any = None, all: bool = False):
+        if (not option == None) and (type(option) == str) and self.config.has_option(section, option):
+            if (self.config.has_section(section)) or (section == "DEFAULT"):
+                if all == True:
+                    self.config.remove_option(section, option)
+                elif value == None:
+                    _str = self.get(section, option)
+                    if not type(_str) == list:
+                        _str = _str.split()
+                    if (len(_str) <= 1):
+                        self.config.remove_option(section, option)
+                    else:
+                        del _str[len(_str)-1]
+                        _str = " ".join(_str)
+                        self.set(section, option, _str)
+                else:
+                    _str = self.get(section, option)
+                    if not type(_str) == list:
+                        _str = _str.split()
+                    if str(value) in _str:
+                        _str.remove(str(value))
+                    if (len(_str) < 1):
+                        self.config.remove_option(section, option)
+                    else:
+                        _str = " ".join(_str)
+                        self.set(section, option, _str)
+        self.__writeChangies()
 
     def set(self, section: str = "DEFAULT", option: str = None, value: any = None):
         if not option == None:
@@ -48,7 +76,7 @@ class config:
                 _str = " ".join(value)
             else:
                 _str = value
-            self.__addOption(section, option, _str, False)
+            self.__addOption(section, option, str(_str), False)
 
     def add(self, section: str = "DEFAULT", option: str = None, value: any = None):
         if not option == None:
@@ -56,7 +84,7 @@ class config:
                 _str = " ".join(value)
             else:
                 _str = value
-            self.__addOption(section, option, _str, True)
+            self.__addOption(section, option, str(_str), True)
     
     def __addOption(self, section: str, option: str, value: str, arr: bool):
         if not section == "DEFAULT":
@@ -72,13 +100,18 @@ class config:
             self.config.set(section, option, value)
         self.__writeChangies()
     
-    def get(self, section: str = "DEFAULT", option: str = None):
+    def get(self, section: str = "DEFAULT", option: str = None, returnType: str = None):
         if not option == None:
             if (self.config.has_section(section)) or (section == "DEFAULT"):
                 if self.config.has_option(section, option):
                     _str = self.config.get(section, option)
-                    if not len(_str.split()) == 1:
+                    if returnType == None:
+                        if not len(_str.split()) == 1:
+                            _str = _str.split()
+                    elif returnType == "list":
                         _str = _str.split()
+                    else:
+                        pass
                     return _str
 
     def remove(self) -> None:
