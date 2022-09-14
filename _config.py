@@ -119,8 +119,3 @@ class config:
         
         """
         self.__writeChangies()
-
-conf1 = config( 
-    path = "./conf",
-    filename = "Settings.ini"
-)
