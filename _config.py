@@ -18,11 +18,12 @@ class config:
         """
         
         """
-        if not _os.path.exists(f"{self.path}/{self.filename}"):
+
+        if not _os.path.exists(self.fullpath()):
             self.__createConfig()
 
+        self.config.read(self.fullpath())
         self.config = _configparser.ConfigParser()
-        self.config.read(f"{self.path}/{self.filename}")
         print("read configuration file")
         return self.config
 
@@ -30,22 +31,26 @@ class config:
         """
         
         """
-        if not _os.path.exists(self.path):
-            _os.makedirs(self.path)
+        if not self.fullpath() == False:
+            if not _os.path.exists(self.path):
+                _os.makedirs(self.path)
         self.__writeChangies()
 
     def __writeChangies(self) -> None:
         """
         
         """
-        with open(f"{self.path}/{self.filename}", "w") as config_file:
+        with open(self.fullpath(), "w") as config_file:
             self.config.write(config_file)
     
     def fullpath(self) -> None:
         """
         
         """
-        fullpath = f"{self.path}/{self.filename}"
+        if self.path == False:
+            fullpath = self.filename
+        else:
+            fullpath = f"{self.path}/{self.filename}"
         return fullpath
     
     def delete(self, section: str = "DEFAULT", option: str = None):
