@@ -9,6 +9,8 @@ class config:
         """
         
         """
+        if path == False:
+            path = "."
         self.path = path
         self.filename = filename
         self.config = _configparser.ConfigParser()
