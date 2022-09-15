@@ -9,10 +9,17 @@ class config:
         """
         
         """
-        if path == False:
+        if path == None:
             path = "."
-        self.path = path
-        self.filename = filename
+        elif type(path) == str:
+            self.path = path
+        else:
+            pass
+        if type(filename) == str:
+            self.filename = filename
+        else:
+            pass
+        
         self.config = _configparser.ConfigParser()
         self.__readConfig()
         
@@ -20,7 +27,6 @@ class config:
         """
         
         """
-
         if not _os.path.exists(self.fullpath()):
             self.__createConfig()
 
@@ -66,6 +72,16 @@ class config:
                         if self.config.has_option(section, option):
                             self.config.remove_option(section, option)
                             self.__writeChangies()
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
 
     def add(self, section: str = "DEFAULT", option: str = None, value: any = None):
         """
@@ -74,8 +90,16 @@ class config:
         if not option == None:
             if type(section) == str:
                 if type(option) == str:
-                    if(type(value) == str):
+                    if type(value) == str:
                         self.__addOption(section, option, value)
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
     
     def __addOption(self, section: str, option: str, value: str):
         """
@@ -92,12 +116,29 @@ class config:
         
         """
         if not option == None:
-            if (self.config.has_section(section)) or (section == "DEFAULT"):
-                if self.config.has_option(section, option):
-                    return self.config.get(section, option)
+            if type(section) == str:
+                if type(option) == str:
+                    if (self.config.has_section(section)) or (section == "DEFAULT"):
+                        if self.config.has_option(section, option):
+                            return self.config.get(section, option)
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
                     
-
     def remove(self) -> None:
+        """
+        
+        """
+        self.__writeChangies()
+
+    def __del__(self) -> None:
         """
         
         """

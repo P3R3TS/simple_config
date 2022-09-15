@@ -7,7 +7,7 @@ __version__ = "0.0.1"
 __all__ = ["config"]
 
 config = _config(
-    path = False,
+    path = None,
     filename = "config.ini"
 )
 
