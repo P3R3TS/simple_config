@@ -5,17 +5,21 @@ from configparser import Error as __Error
 
 class config:
     """
-    calss class
+    Main config class
     """
     def __init__(self, path: str = ".", filename: str = "config.ini") -> None:
         """
-        
+            >>> Initialization simple config
+            >>> path - Config directory
+            >>> filename - Name of the configuration file
+            >>> Example:
+            >>> config = config(path = "./advancedSettings/Settings", filename = "configuration.ini")
         """
         expansion = ".ini"
         if path == None:
             path = "."
         elif type(path) == str:
-            self.checkPath()
+            self.__checkPath()
             self.path = path
         else:
             raise _Error.incorrectPathError(path)
@@ -32,8 +36,9 @@ class config:
             raise _Error.configError(e)
         self.__readConfig()
     
-    def checkPath(self):
-        if not list(self.path)[-1] == "/":
+    def __checkPath(self):
+        """check path for correctly type"""
+        if (not list(self.path)[1] == ".") or (not list(self.path)[2] == "/"):
             _Error.incorrectPathError(self.path)
         counter = 0
         for elem in list(self.path):
@@ -46,7 +51,10 @@ class config:
         
     def __readConfig (self) -> None:
         """
-        
+            >>> read config method.
+            >>> Checking if a configuration file exists, if not, then creating a configuration file.
+            >>> Reading configuration file.
+            >>> Return configuraion file
         """
         if not _os.path.exists(self.fullpath()):
             self.__createConfig()
@@ -63,7 +71,9 @@ class config:
 
     def __createConfig(self) -> None:
         """
-        
+            >>> Create configuration file.
+            >>> Checking whether the necessary directory exists, if not, creating directory.
+            >>> Starting write changing function.
         """
         if not self.fullpath() == False:
             if not _os.path.exists(self.path):
@@ -72,7 +82,7 @@ class config:
 
     def __writeChangies(self) -> None:
         """
-        
+            open necessary file
         """
         with open(self.fullpath(), "w") as config_file:
             try:
@@ -80,9 +90,9 @@ class config:
             except __Error as e:
                 _Error.configError(e)
     
-    def fullpath(self) -> None:
+    def fullpath(self) -> str:
         """
-        
+            return string full path with path and file name
         """
         if self.path == False:
             fullpath = self.filename
@@ -92,7 +102,9 @@ class config:
     
     def delete(self, section: str = "DEFAULT", option: str = None) -> None:
         """
-        
+            >>> delete option function.
+            >>> example:
+            >>> config.delete(section = "Global settins", option = "Time to answer")
         """
         if not option == None:
             if type(section) == str:
@@ -114,7 +126,9 @@ class config:
 
     def add(self, section: str = "DEFAULT", option: str = None, value: any = None) -> None:
         """
-        
+            >>> add function.
+            >>> example:
+            >>> config.add(section = "Global settins", option = "Time to answer", value = 1000)
         """
         if not option == None:
             if type(section) == str:
@@ -132,7 +146,7 @@ class config:
     
     def __addOption(self, section: str, option: str, value: str) -> None:
         """
-        
+            Add option function
         """
         if not section == "DEFAULT":
             if not self.config.has_section(section):
@@ -148,7 +162,10 @@ class config:
     
     def get(self, section: str = "DEFAULT", option: str = None) -> str:
         """
-        
+            >>> add function.
+            >>> example:
+            >>> returned = config.get(section = "Global settins", option = "Time to answer")
+            >>> returned is 1000
         """
         if not option == None:
             if type(section) == str:
@@ -169,13 +186,13 @@ class config:
                     
     def remove(self) -> None:
         """
-        
+            If an unprocessed error occurs, save all changes.
         """
         self.__writeChangies()
 
     def __del__(self) -> None:
         """
-        
+            If an object is deleted or the script crashes, save all changes.
         """
         self.__writeChangies()
 
