@@ -1,27 +1,48 @@
 import configparser as _configparser
 import os as _os
+import _exception as _Error
+from configparser import Error as __Error
 
 class config:
     """
     calss class
     """
-    def __init__(self, path: str = ".", filename: str = "config.ini"):
+    def __init__(self, path: str = ".", filename: str = "config.ini") -> None:
         """
         
         """
+        expansion = ".ini"
         if path == None:
             path = "."
         elif type(path) == str:
+            self.checkPath()
             self.path = path
         else:
-            pass
+            raise _Error.incorrectPathError(path)
         if type(filename) == str:
-            self.filename = filename
+            if (len(filename) - filename.find(expansion)) == len(expansion):
+                self.filename = filename
+            else:
+                raise _Error.incorrectFileNameError(filename)
         else:
-            pass
-        
-        self.config = _configparser.ConfigParser()
+            raise _Error.configTypeError(filename, "str")
+        try:
+            self.config = _configparser.ConfigParser()
+        except _Error as e:
+            raise _Error.configError(e)
         self.__readConfig()
+    
+    def checkPath(self):
+        if not list(self.path)[-1] == "/":
+            _Error.incorrectPathError(self.path)
+        counter = 0
+        for elem in list(self.path):
+            if elem == "/":
+                counter = counter + 1
+            elif counter < 2:
+                counter = 0
+            else:
+                _Error.incorrectPathError(self.path)
         
     def __readConfig (self) -> None:
         """
@@ -30,9 +51,14 @@ class config:
         if not _os.path.exists(self.fullpath()):
             self.__createConfig()
 
-        self.config.read(self.fullpath())
-        self.config = _configparser.ConfigParser()
-        print("read configuration file")
+        try:
+            self.config.read(self.fullpath())
+        except _Error as e:
+            raise _Error.configError(e)
+        try:
+            self.config = _configparser.ConfigParser()
+        except _Error as e:
+            raise _Error.configError(e)
         return self.config
 
     def __createConfig(self) -> None:
@@ -49,7 +75,10 @@ class config:
         
         """
         with open(self.fullpath(), "w") as config_file:
-            self.config.write(config_file)
+            try:
+                self.config.write(config_file)
+            except __Error as e:
+                _Error.configError(e)
     
     def fullpath(self) -> None:
         """
@@ -61,7 +90,7 @@ class config:
             fullpath = f"{self.path}/{self.filename}"
         return fullpath
     
-    def delete(self, section: str = "DEFAULT", option: str = None):
+    def delete(self, section: str = "DEFAULT", option: str = None) -> None:
         """
         
         """
@@ -73,17 +102,17 @@ class config:
                             self.config.remove_option(section, option)
                             self.__writeChangies()
                         else:
-                            pass
+                            raise _Error.notFound(option, "option")
                     else:
-                        pass
+                        raise _Error.configTypeError(option, "str")
                 else:
-                    pass
+                    raise _Error.notFound(section, "section")
             else:
-                pass
+                raise _Error.configTypeError(section, "str")
         else:
-            pass
+            _Error.configError('the "option" cannot be "None"')
 
-    def add(self, section: str = "DEFAULT", option: str = None, value: any = None):
+    def add(self, section: str = "DEFAULT", option: str = None, value: any = None) -> None:
         """
         
         """
@@ -93,25 +122,31 @@ class config:
                     if type(value) == str:
                         self.__addOption(section, option, value)
                     else:
-                        pass
+                        raise _Error.configTypeError(value, "str")
                 else:
-                    pass
+                    raise _Error.configTypeError(option, "str")
             else:
-                pass
+                raise _Error.configTypeError(section, "str")
         else:
-            pass
+            _Error.configError('the "option" cannot be "None"')
     
-    def __addOption(self, section: str, option: str, value: str):
+    def __addOption(self, section: str, option: str, value: str) -> None:
         """
         
         """
         if not section == "DEFAULT":
             if not self.config.has_section(section):
-                self.config.add_section(section)
-        self.config.set(section, option, value)
+                try:
+                    self.config.add_section(section)
+                except __Error as e:
+                    _Error.configError(e)
+        try:
+            self.config.set(section, option, value)
+        except __Error as e:
+            _Error.configError(e)
         self.__writeChangies()
     
-    def get(self, section: str = "DEFAULT", option: str = None):
+    def get(self, section: str = "DEFAULT", option: str = None) -> str:
         """
         
         """
@@ -122,15 +157,15 @@ class config:
                         if self.config.has_option(section, option):
                             return self.config.get(section, option)
                         else:
-                            pass
+                            raise _Error.notFound(option, "option")
                     else:
-                        pass
+                        raise _Error.notFound(section, "section")
                 else:
-                    pass
+                    raise _Error.configTypeError(option, "str")
             else:
-                pass
+                raise _Error.configTypeError(section, "str")
         else:
-            pass
+            _Error.configError('the "option" cannot be "None"')
                     
     def remove(self) -> None:
         """
@@ -143,3 +178,4 @@ class config:
         
         """
         self.__writeChangies()
+
