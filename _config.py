@@ -136,7 +136,11 @@ class config:
                     if type(value) == str:
                         self.__addOption(section, option, value)
                     else:
-                        raise _Error.configTypeError(value, "str")
+                        if type(value) in [int, float, complex]:
+                            value = str(value)
+                            self.__addOption(section, option, value)
+                        else:
+                            raise _Error.configTypeError(value, "str")
                 else:
                     raise _Error.configTypeError(option, "str")
             else:
