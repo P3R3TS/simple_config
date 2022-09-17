@@ -36,10 +36,11 @@ class config:
             raise _Error.configError(e)
         self.__readConfig()
     
-    def __checkPath(self):
-        """check path for correctly type"""
+    def __checkPath(self) -> None:
+        """check path for correctly type: D:/dir/dir/dir or ./dir/dir"""
         if (not list(self.path)[1] == ".") or (not list(self.path)[2] == "/"):
-            _Error.incorrectPathError(self.path)
+            if (not list(self.path)[2] == ":") or (not list(self.path)[3] == "/"):
+                _Error.incorrectPathError(self.path)
         counter = 0
         for elem in list(self.path):
             if elem == "/":
@@ -75,7 +76,7 @@ class config:
             >>> Checking whether the necessary directory exists, if not, creating directory.
             >>> Starting write changing function.
         """
-        if not self.fullpath() == False:
+        if not self.path == None:
             if not _os.path.exists(self.path):
                 _os.makedirs(self.path)
         self.__writeChangies()
@@ -164,9 +165,10 @@ class config:
             _Error.configError(e)
         self.__writeChangies()
     
-    def get(self, section: str = "DEFAULT", option: str = None) -> str:
+    def get(self, section: str = "DEFAULT", option: str = None, gettingtype: str  = "str"):
         """
             >>> add function.
+            >>> gettingtype can be str, int, float and complex
             >>> example:
             >>> returned = config.get(section = "Global settins", option = "Time to answer")
             >>> returned is 1000
@@ -176,7 +178,15 @@ class config:
                 if type(option) == str:
                     if (self.config.has_section(section)) or (section == "DEFAULT"):
                         if self.config.has_option(section, option):
-                            return self.config.get(section, option)
+                            _str = self.config.get(section, option)
+                            if gettingtype == "str":
+                                return _str
+                            elif gettingtype == "int":
+                                return int(_str)
+                            elif gettingtype == "float":
+                                return float(_str)
+                            elif gettingtype == "complex":
+                                return complex(_str)
                         else:
                             raise _Error.notFound(option, "option")
                     else:
