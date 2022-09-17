@@ -187,6 +187,8 @@ class config:
                                 return float(_str)
                             elif gettingtype == "complex":
                                 return complex(_str)
+                            else:
+                                _Error.configError('getting rype aruments can be only "str", "float" and "complex"')
                         else:
                             raise _Error.notFound(option, "option")
                     else:
