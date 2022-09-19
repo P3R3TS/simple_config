@@ -2,6 +2,7 @@ import configparser as _configparser
 import os as _os
 import _exception as _Error
 from configparser import Error as __Error
+from pathlib import Path
 
 class config:
     """
@@ -19,13 +20,12 @@ class config:
         if path == None:
             path = "."
         elif type(path) == str:
-            self.__checkPath()
-            self.path = path
+            self.path: Path = Path(path)
         else:
             raise _Error.incorrectPathError(path)
         if type(filename) == str:
             if (len(filename) - filename.find(expansion)) == len(expansion):
-                self.filename = filename
+                self.filename: Path = Path(filename)
             else:
                 raise _Error.incorrectFileNameError(filename)
         else:
@@ -35,20 +35,6 @@ class config:
         except _Error as e:
             raise _Error.configError(e)
         self.__readConfig()
-    
-    def __checkPath(self) -> None:
-        """check path for correctly type: D:/dir/dir/dir or ./dir/dir"""
-        if (not list(self.path)[1] == ".") or (not list(self.path)[2] == "/"):
-            if (not list(self.path)[2] == ":") or (not list(self.path)[3] == "/"):
-                _Error.incorrectPathError(self.path)
-        counter = 0
-        for elem in list(self.path):
-            if elem == "/":
-                counter = counter + 1
-            elif counter < 2:
-                counter = 0
-            else:
-                _Error.incorrectPathError(self.path)
         
     def __readConfig (self) -> None:
         """
@@ -98,7 +84,7 @@ class config:
         if self.path == False:
             fullpath = self.filename
         else:
-            fullpath = f"{self.path}/{self.filename}"
+            fullpath = self.path / self.filename
         return fullpath
     
     def delete(self, section: str = "DEFAULT", option: str = None) -> None:
