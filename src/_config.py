@@ -1,6 +1,6 @@
 import configparser as _configparser
 import os as _os
-import _exception as _Error
+from . import _exception as _Error
 from configparser import Error as __Error
 from pathlib import Path
 
@@ -8,7 +8,7 @@ class config:
     """
     Main config class
     """
-    def __init__(self, path: str = ".", filename: str = "config.ini") -> None:
+    def __init__(self, path: str = None, filename: str = "config.ini") -> None:
         """
             >>> Initialization simple config
             >>> path - Config directory
@@ -18,7 +18,7 @@ class config:
         """
         expansion = ".ini"
         if path == None:
-            path = "."
+            self.path = None
         elif type(path) == str:
             self.path: Path = Path(path)
         else:
@@ -81,11 +81,11 @@ class config:
         """
             return string full path with path and file name
         """
-        if self.path == False:
+        if self.path == None:
             fullpath = self.filename
         else:
             fullpath = self.path / self.filename
-        return fullpath
+        return str(fullpath)
     
     def delete(self, section: str = "DEFAULT", option: str = None) -> None:
         """
@@ -189,12 +189,6 @@ class config:
     def remove(self) -> None:
         """
             If an unprocessed error occurs, save all changes.
-        """
-        self.__writeChangies()
-
-    def __del__(self) -> None:
-        """
-            If an object is deleted or the script crashes, save all changes.
         """
         self.__writeChangies()
 
