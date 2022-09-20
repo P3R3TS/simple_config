@@ -1,21 +1,20 @@
-import configparser as _configparser
-import os as _os
+import configparser as _Configparser
+import os as _Os
 from . import _exception as _Error
 from configparser import Error as __Error
 from pathlib import Path
 
 class config:
     """
-    Main config class
+        >>> Main config class
+        >>> Initialization simple config
+        >>> path - Config directory
+        >>> filename - Name of the configuration file
+        >>> Example:
+        >>> config = config(path = "./advancedSettings/Settings", filename = "configuration.ini")
     """
     def __init__(self, path: str = None, filename: str = "config.ini") -> None:
-        """
-            >>> Initialization simple config
-            >>> path - Config directory
-            >>> filename - Name of the configuration file
-            >>> Example:
-            >>> config = config(path = "./advancedSettings/Settings", filename = "configuration.ini")
-        """
+        
         expansion = ".ini"
         if path == None:
             self.path = None
@@ -31,7 +30,7 @@ class config:
         else:
             raise _Error.configTypeError(filename, "str")
         try:
-            self.config = _configparser.ConfigParser()
+            self.config = _Configparser.ConfigParser()
         except _Error as e:
             raise _Error.configError(e)
         self.__readConfig()
@@ -43,15 +42,14 @@ class config:
             >>> Reading configuration file.
             >>> Return configuraion file
         """
-        if not _os.path.exists(self.fullpath()):
+        if not _Os.path.exists(self.fullpath()):
             self.__createConfig()
-
         try:
             self.config.read(self.fullpath())
         except _Error as e:
             raise _Error.configError(e)
         try:
-            self.config = _configparser.ConfigParser()
+            self.config = _Configparser.ConfigParser()
         except _Error as e:
             raise _Error.configError(e)
         return self.config
@@ -63,14 +61,17 @@ class config:
             >>> Starting write changing function.
         """
         if not self.path == None:
-            if not _os.path.exists(self.path):
-                _os.makedirs(self.path)
+            """print(_Os.path.exists(str(self.path)))
+            if _Os.path.exists(str(self.path)) == False:"""
+            
+            _Os.makedirs(str(self.path), exist_ok = True)
         self.__writeChangies()
 
     def __writeChangies(self) -> None:
         """
             open necessary file
         """
+        
         with open(self.fullpath(), "w") as config_file:
             try:
                 self.config.write(config_file)
@@ -82,10 +83,10 @@ class config:
             return string full path with path and file name
         """
         if self.path == None:
-            fullpath = self.filename
+            fullpath = str(self.filename)
         else:
-            fullpath = self.path / self.filename
-        return str(fullpath)
+            fullpath = str(self.path/self.filename)
+        return fullpath
     
     def delete(self, section: str = "DEFAULT", option: str = None) -> None:
         """
@@ -185,10 +186,3 @@ class config:
                 raise _Error.configTypeError(section, "str")
         else:
             _Error.configError('the "option" cannot be "None"')
-                    
-    def remove(self) -> None:
-        """
-            If an unprocessed error occurs, save all changes.
-        """
-        self.__writeChangies()
-
