@@ -39,3 +39,7 @@ The "fullpath" method returns the full path to the configuration file. "your_con
 ```python
 fullpath = config.fullpath()
 ```
+
+About author:
+=============
+Author: P3R3TS
