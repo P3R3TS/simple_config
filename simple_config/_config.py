@@ -1,8 +1,7 @@
-import configparser as _Configparser
 import os as _Os
 from . import _exception as _Error
-from configparser import Error as __Error
 from pathlib import Path
+from . import _core
 
 class config:
     """
@@ -30,7 +29,7 @@ class config:
         else:
             raise _Error.configTypeError(filename, "str")
         try:
-            self.config = _Configparser.ConfigParser()
+            self.config = _core.core()
         except _Error as e:
             raise _Error.configError(e)
         self.__readConfig()
@@ -44,14 +43,10 @@ class config:
         """
         if not _Os.path.exists(self.fullpath()):
             self.__createConfig()
-        try:
-            self.config.read(self.fullpath())
-        except _Error as e:
-            raise _Error.configError(e)
-        try:
-            self.config = _Configparser.ConfigParser()
-        except _Error as e:
-            raise _Error.configError(e)
+
+        with open(self.fullpath(), "r") as config_file:
+            self.config.read(config_file)
+
         return self.config
 
     def __createConfig(self) -> None:
@@ -73,10 +68,7 @@ class config:
         """
         
         with open(self.fullpath(), "w") as config_file:
-            try:
-                self.config.write(config_file)
-            except __Error as e:
-                _Error.configError(e)
+            self.config.write(config_file)
     
     def fullpath(self) -> str:
         """
@@ -142,14 +134,10 @@ class config:
         """
         if not section == "DEFAULT":
             if not self.config.has_section(section):
-                try:
-                    self.config.add_section(section)
-                except __Error as e:
-                    _Error.configError(e)
-        try:
-            self.config.set(section, option, value)
-        except __Error as e:
-            _Error.configError(e)
+                self.config.add_section(section)
+        
+        self.config.set(section, option, value)
+
         self.__writeChangies()
     
     def get(self, section: str = "DEFAULT", option: str = None, gettingtype: str  = "str"):
@@ -186,3 +174,4 @@ class config:
                 raise _Error.configTypeError(section, "str")
         else:
             _Error.configError('the "option" cannot be "None"')
+            
