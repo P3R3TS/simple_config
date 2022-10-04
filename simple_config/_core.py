@@ -63,7 +63,7 @@ class core:
         else:
             return param
         
-    def has_option(self, section: str, option: str):
+    def has_option(self, section: str, option: str): 
         try:
             self.configDict[section][option]
         except KeyError:

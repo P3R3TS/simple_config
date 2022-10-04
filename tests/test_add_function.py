@@ -49,5 +49,6 @@ def test_add_and_delete_str_01():
     _str = config_01.get(section = "settings", option = "test_option", gettingtype = "str")
     assert _str == "42"
     assert type(_str) == str
+    assert config_01.has_option(section = "settings", option = "test_option") == True
     config_01.delete(section = "settings", option = "test_option")
-    assert get
+    assert config_01.has_option(section = "settings", option = "test_option") == False

@@ -175,3 +175,20 @@ class config:
         else:
             _Error.configError('the "option" cannot be "None"')
             
+    def has_option(self, section: str, option: str) -> bool:
+        """
+        has_option searches for an option in a given section
+        """
+        if not type(section) == str:
+            raise _Error.configTypeError(section, "str")
+        if not type(option) == str:
+            raise _Error.configTypeError(option, "str")
+        return self.config.has_option(section = section, option = option)
+
+    def has_section(self, section: str) -> bool:
+        """
+        has_section searches for the desired section
+        """
+        if not type(section) == str:
+            raise _Error.configTypeError(section, "str")
+        return self.config.has_section(section)
