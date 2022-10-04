@@ -67,4 +67,5 @@ your_section = config.has_section(section = "your_section")
 
 About author:
 =============
-Author: P3R3TS
+Author: **P3R3TS**
+Email: **b.zabortsev@gmail.com**
