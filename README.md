@@ -23,12 +23,12 @@ config = config(path = path, filename = filename)
 Available methods:
 ==================
 
--add(section: str, option: str, value: str)
--get(section: str, option: str, gettingtype: str)
--delete(section: str, option: str)
--fullpath()
--has_option(section: str, option: str)
--has_section(section: str)
+- add(section: str, option: str, value: str)
+- get(section: str, option: str, gettingtype: str)
+- delete(section: str, option: str)
+- fullpath()
+- has_option(section: str, option: str)
+- has_section(section: str)
 
 EXAMPLES:
 =========
