@@ -20,12 +20,27 @@ filename = "your_filename.ini"
 config = config(path = path, filename = filename)
 ``` 
 
-The "add" method creates a new section if it does not exist. And a new option if it doesn't exist. Otherwise, it overwrites this option 
+Available methods:
+==================
+
+-add(section: str, option: str, value: str)
+-get(section: str, option: str, gettingtype: str)
+-delete(section: str, option: str)
+-fullpath()
+-has_option(section: str, option: str)
+-has_section(section: str)
+
+EXAMPLES:
+=========
+
+
+The "add" method creates a new section if it does not exist. And a new option if it doesn't exist. Otherwise, it overwrites this option
 ```python
 config.add(section = "your_section", option = "your_option", value = "your_value") 
 ```
+Value can be only str, int, float or complex types
 
-The "get" method gets the desired option, if it exists. Otherwise, the error "simple_config.NotFound - Incorrect section/option" will be returned. Your_section/option is not found". The gettingtype argument can be ["str", "int", "float", "complex"]
+The "get" method gets the desired option, if it exists. Otherwise, the error "simple_config.NotFound - Incorrect section/option" will be returned. Your_section/option is not found". The gettingtype argument can be only ["str", "int", "float", "complex"]
 ```python
 config.get(section = "your_section", option = "your_option", gettingtype = "str")
 ```
@@ -38,6 +53,16 @@ config.delete(section = "your_section", option = "your_option")
 The "fullpath" method returns the full path to the configuration file. "your_config_path/your_filename.ini"
 ```python
 fullpath = config.fullpath()
+```
+
+The "has_option" method returns **True** of **False** if seaching option is founded
+```python
+your_option = config.has_option(section = "your_section", option = "your_option")
+```
+
+The "has_section" method returns **True** of **False** if seaching section is founded
+```python
+your_section = config.has_section(section = "your_section")
 ```
 
 About author:
