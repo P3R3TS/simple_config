@@ -52,34 +52,22 @@ class core:
         else: return None
     
     def get(self, section: str, option: str):
-        try:
-            try:
-                self.configDict[section]
-            except KeyError:
-                raise _Error.sectionError(section)
-            param = self.configDict[section][option]
-        except KeyError:
-            raise _Error.sectionError(option, section)
-        else:
-            return param
+        if not self.has_option(section = section, option = option):
+            raise _Error.optionError(option, section)
+
+        return self.configDict[section][option]
         
-    def has_option(self, section: str, option: str): 
-        try:
-            self.configDict[section][option]
-        except KeyError:
-            return False
-        return True
+    def has_option(self, section: str, option: str):
+        if self.has_section(section = section):
+            return option in self.configDict[section]
+        return False
+
     
     def has_section(self, section: str):
-        try:
-            self.configDict[section]
-        except KeyError:
-            return False
-        return True
+        return section in self.configDict
     
     def add_section(self, section: str):
         self.configDict[section] = {}
-        return True
     
     def set(self, section: str = None, option: str = None, value: str = None):
         if option == None:
@@ -95,7 +83,6 @@ class core:
                 self.configDict[section][option] = value
             except KeyError:
                 raise _Error.optionError(option, section)
-        return True
 
     def write(self, file: TextIOWrapper):
         for key, value in self.configDict.items():
@@ -108,9 +95,9 @@ class core:
                 pass
     
     def remove_option(self, section, option):
-        if self.has_section == False:
+        if self.has_section(section = section) == False:
             raise _Error.sectionError(section)
-        if self.has_section == False:
+        if self.has_option(section = section, option = option) == False:
             raise _Error.optionError(option, section)
         tempDict = self.configDict[section]
         self.configDict[section] = tempDict.pop(option)

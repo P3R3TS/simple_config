@@ -86,23 +86,19 @@ class config:
             >>> example:
             >>> config.delete(section = "Global settins", option = "Time to answer")
         """
-        if not option == None:
-            if type(section) == str:
-                if (self.config.has_section(section)) or (section == "DEFAULT"):
-                    if type(option) == str:
-                        if self.config.has_option(section, option):
-                            self.config.remove_option(section, option)
-                            self.__writeChangies()
-                        else:
-                            raise _Error.notFound(option, "option")
-                    else:
-                        raise _Error.configTypeError(option, "str")
-                else:
-                    raise _Error.notFound(section, "section")
-            else:
-                raise _Error.configTypeError(section, "str")
-        else:
-            _Error.configError('the "option" cannot be "None"')
+        if option == None: 
+            raise _Error.configError('the "option" cannot be "None"')
+        if not type(section) == str: 
+            raise _Error.configTypeError(section, "str")
+        if not (self.config.has_section(section)) or (section == "DEFAULT"): 
+            raise _Error.notFound(section, "section")
+        if not type(option) == str:
+            raise _Error.configTypeError(option, "str")
+        if not self.config.has_option(section, option):
+            raise _Error.notFound(option, "option")
+                           
+        self.config.remove_option(section, option)
+        self.__writeChangies()
 
     def add(self, section: str = "DEFAULT", option: str = None, value: any = None) -> None:
         """
@@ -110,23 +106,22 @@ class config:
             >>> example:
             >>> config.add(section = "Global settins", option = "Time to answer", value = 1000)
         """
-        if not option == None:
-            if type(section) == str:
-                if type(option) == str:
-                    if type(value) == str:
-                        self.__addOption(section, option, value)
-                    else:
-                        if type(value) in [int, float, complex]:
-                            value = str(value)
-                            self.__addOption(section, option, value)
-                        else:
-                            raise _Error.configTypeError(value, "str")
-                else:
-                    raise _Error.configTypeError(option, "str")
-            else:
-                raise _Error.configTypeError(section, "str")
+        if option == None:
+            raise _Error.configError('the "option" cannot be "None"')
+        if not type(section) == str:
+            raise _Error.configTypeError(section, "str")
+        if not type(option) == str:
+            raise _Error.configTypeError(option, "str")
+        
+        if type(value) == str:
+            self.__addOption(section, option, value)
         else:
-            _Error.configError('the "option" cannot be "None"')
+            if type(value) in [int, float, complex]:
+                value = str(value)
+                self.__addOption(section, option, value)
+            else:
+                raise _Error.configTypeError(value, "str")
+                    
     
     def __addOption(self, section: str, option: str, value: str) -> None:
         """
@@ -148,32 +143,34 @@ class config:
             >>> returned = config.get(section = "Global settins", option = "Time to answer")
             >>> returned is 1000
         """
-        if not option == None:
-            if type(section) == str:
-                if type(option) == str:
-                    if (self.config.has_section(section)) or (section == "DEFAULT"):
-                        if self.config.has_option(section, option):
-                            _str = self.config.get(section, option)
-                            if gettingtype == "str":
-                                return _str
-                            elif gettingtype == "int":
-                                return int(_str)
-                            elif gettingtype == "float":
-                                return float(_str)
-                            elif gettingtype == "complex":
-                                return complex(_str)
-                            else:
-                                _Error.configError('getting rype aruments can be only "str", "float" and "complex"')
-                        else:
-                            raise _Error.notFound(option, "option")
-                    else:
-                        raise _Error.notFound(section, "section")
-                else:
-                    raise _Error.configTypeError(option, "str")
-            else:
-                raise _Error.configTypeError(section, "str")
+        if option == None:
+            raise _Error.configError('the "option" cannot be "None"')
+
+        if not type(section) == str:
+            raise _Error.configTypeError(section, "str")
+
+        if not type(option) == str:
+            raise _Error.configTypeError(option, "str")
+
+        if not (self.config.has_section(section)) or (section == "DEFAULT"):
+            raise _Error.notFound(section, "section")
+
+        if not self.config.has_option(section, option):
+            raise _Error.notFound(option, "option")
+                    
+                        
+        _str = self.config.get(section, option)
+        if gettingtype == "str":
+            return _str
+        elif gettingtype == "int":
+            return int(_str)
+        elif gettingtype == "float":
+            return float(_str)
+        elif gettingtype == "complex":
+            return complex(_str)
         else:
-            _Error.configError('the "option" cannot be "None"')
+            _Error.configError('getting rype aruments can be only "str", "float" and "complex"')
+                            
             
     def has_option(self, section: str, option: str) -> bool:
         """
